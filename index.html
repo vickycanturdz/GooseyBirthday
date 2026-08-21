@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#e9f2ee" />
+  <title>Happy Birthday Goosey</title>
+  <style>
+    :root {
+      --paper: #f7fbf8;
+      --ink: #2f3335;
+      --mint: #dcebe4;
+      --shadow: rgba(42, 56, 48, .18);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.9), transparent 30%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,.65), transparent 26%),
+        linear-gradient(145deg, #edf5f1, #dfece7);
+      font-family: "Bradley Hand", "Comic Sans MS", "Segoe Print", cursive;
+      color: var(--ink);
+    }
+
+    .hint {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font: 600 14px/1.2 system-ui, sans-serif;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(47, 51, 53, .62);
+      transition: opacity .35s ease;
+      user-select: none;
+      z-index: 5;
+    }
+
+    .scene {
+      width: min(84vw, 430px);
+      aspect-ratio: 2 / 3;
+      perspective: 1800px;
+      position: relative;
+      transition: width .45s ease, transform .45s ease;
+    }
+
+    .scene.open {
+      width: min(92vw, 860px);
+      transform: translateX(25%);
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .back {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(221,238,230,.75), transparent 26%),
+        radial-gradient(circle at 78% 76%, rgba(216,235,226,.85), transparent 30%),
+        var(--paper);
+      box-shadow: 0 24px 55px var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(52, 74, 63, .12);
+    }
+
+    .inside {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 11% 10%;
+      text-align: center;
+      position: relative;
+    }
+
+    .inside::before,
+    .inside::after {
+      content: "✦";
+      position: absolute;
+      color: #86b896;
+      font-size: clamp(18px, 4vw, 34px);
+      opacity: .7;
+    }
+
+    .inside::before { top: 9%; left: 11%; transform: rotate(-12deg); }
+    .inside::after { bottom: 10%; right: 12%; transform: rotate(18deg); }
+
+    .message {
+      max-width: 90%;
+      font-size: clamp(34px, 7.5vw, 68px);
+      line-height: 1.02;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      transform: rotate(-1deg);
+    }
+
+    .message .goosey {
+      display: block;
+      margin-top: .15em;
+      font-size: 1.13em;
+    }
+
+    .tiny {
+      margin-top: 1rem;
+      font-size: clamp(20px, 4vw, 32px);
+      color: #5f8f6d;
+    }
+
+    .front {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 1.05s cubic-bezier(.2,.75,.2,1);
+      z-index: 3;
+      cursor: pointer;
+      box-shadow: 0 24px 55px var(--shadow);
+    }
+
+    .front-face,
+    .front-inside {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      border: 1px solid rgba(52, 74, 63, .12);
+    }
+
+    .front-face {
+      background: #eef5f2;
+    }
+
+    .front-face img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .front-inside {
+      transform: rotateY(180deg);
+      background:
+        radial-gradient(circle at 65% 18%, rgba(222,239,231,.8), transparent 28%),
+        radial-gradient(circle at 30% 75%, rgba(211,233,223,.8), transparent 32%),
+        var(--paper);
+      display: grid;
+      place-items: center;
+    }
+
+    .front-inside .feather {
+      font-size: clamp(64px, 16vw, 130px);
+      opacity: .3;
+      transform: rotate(-18deg);
+      filter: grayscale(1);
+    }
+
+    .scene.open .front {
+      transform: rotateY(-168deg);
+      box-shadow: 8px 18px 40px rgba(42,56,48,.14);
+    }
+
+    .close {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      border: 0;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(8px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font: 600 14px/1 system-ui, sans-serif;
+      color: #46574f;
+      box-shadow: 0 8px 24px rgba(42,56,48,.12);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .scene.open ~ .close {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 720px) {
+      body { overflow: auto; min-height: 100svh; }
+      .scene.open {
+        width: 92vw;
+        transform: translateX(22%);
+      }
+      .hint { top: 10px; font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .front, .scene { transition-duration: .01ms; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hint" id="hint">Tap the card to open</div>
+
+  <main class="scene" id="scene" aria-label="Birthday card">
+    <section class="card">
+      <div class="back">
+        <div class="inside">
+          <div>
+            <div class="message">
+              Happy Birthday
+              <span class="goosey">Goosey</span>
+            </div>
+            <div class="tiny">♡</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="front" id="front" role="button" tabindex="0" aria-label="Open birthday card">
+        <div class="front-face">
+          <img src="cover.gif" alt="Animated Happy Silly Goosey Birthday cover" />
+        </div>
+        <div class="front-inside">
+          <div class="feather">⌁</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button class="close" id="close" type="button">Close card</button>
+
+  <script>
+    const scene = document.getElementById('scene');
+    const front = document.getElementById('front');
+    const close = document.getElementById('close');
+    const hint = document.getElementById('hint');
+
+    function openCard() {
+      scene.classList.add('open');
+      hint.style.opacity = '0';
+      front.setAttribute('aria-label', 'Birthday card is open');
+    }
+
+    function closeCard() {
+      scene.classList.remove('open');
+      hint.style.opacity = '1';
+      front.setAttribute('aria-label', 'Open birthday card');
+    }
+
+    front.addEventListener('click', openCard);
+    front.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openCard();
+      }
+    });
+    close.addEventListener('click', closeCard);
+  </script>
+</body>
+</html>
